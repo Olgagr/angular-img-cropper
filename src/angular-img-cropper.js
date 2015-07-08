@@ -1267,28 +1267,28 @@ angular.module('angular-img-cropper', []).directive("imageCropper", ['$document'
                 var touchRadius = scope.touchRadius;
                 crop = new ImageCropper(canvas, canvas.width / 2 - width / 2, canvas.height / 2 - height / 2, width, height, keepAspect, touchRadius);
 
+                scope.$watch('image',
+                    function (newValue) {
+                        if (newValue != null) {
+                            var imageObj = new Image();
+                            if(attrs.cors !== undefined && attrs.cors !== "no") {
+                                imageObj.crossOrigin = "Anonymous";
+                            }
+                            imageObj.addEventListener("load", function () {
+
+                                crop.setImage(imageObj);
+                                var img = crop.getCroppedImage(scope.cropWidth, scope.cropHeight);
+                                if(attrs.croppedImage !== undefined) {
+                                    scope.croppedImage = img.src;
+                                }
+                                scope.$apply();
+                            }, false);
+                            imageObj.src = newValue;
+                        }
+                    }
+                );
             });
 
-            scope.$watch('image',
-                function (newValue) {
-                    if (newValue != null) {
-                        var imageObj = new Image();
-                        if(attrs.cors !== undefined && attrs.cors !== "no") {
-                            imageObj.crossOrigin = "Anonymous";
-                        }
-                        imageObj.addEventListener("load", function () {
-
-                            crop.setImage(imageObj);
-                            var img = crop.getCroppedImage(scope.cropWidth, scope.cropHeight);
-                            if(attrs.croppedImage !== undefined) {
-                                scope.croppedImage = img.src;
-                            }
-                            scope.$apply();
-                        }, false);
-                        imageObj.src = newValue;
-                    }
-                }
-            );
         }
     };
 }]);
